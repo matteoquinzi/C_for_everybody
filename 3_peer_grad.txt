@@ -1,0 +1,91 @@
+/*
+This program creates a set of 100 random numbers and sort them
+with the bubble sort algorithm
+*/
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+#define SIZE 100
+
+typedef struct list{int data; struct list *next;} list;
+
+int is_empty_list(const list *l){return (l == NULL);} //empty list has a null pointer
+
+list* create_list(int d)
+{
+    list* head = malloc(sizeof(list));
+    head -> data = d;
+    head -> next = NULL;
+    return head;
+}
+
+list* add_front_list(int d, list* h)
+{
+    list* head = create_list(d);
+    head -> next = h;
+    return head;
+}
+
+list* create_list_random(void) //this assumes that the SIZE has been defined
+{
+    list *h;
+    int i;
+
+    srand(time(0));
+    h = create_list(rand());
+    for (i=1; i<SIZE; i++)
+        h = add_front_list(rand(),h);
+    return h;
+}
+
+void print_list(list *h) //print elements in rows of 5 
+{
+    int i=0;
+    while (h != NULL){
+        if ((i) % 5 == 0) printf("\n");
+        ++i;
+        printf("%d \t:", h -> data);
+        h = h -> next;
+    }
+}
+
+void swap_data(list *p1, list *p2) //swap the data of two lists pointers
+{
+    int t;
+    t = p1->data;
+    p1->data = p2->data;
+    p2->data = t;
+}
+
+void bubble_list(list* h,int k) //in this situation is easier to bubble the max element to the right
+{                               // a recursive formula has been implemented
+    int i=0;
+    list *it = h;
+
+    if (k==0) return; //recursive base case
+
+    for(i=0; (i<k-1); i++)
+    {
+        if (h->next->data < h->data)
+            swap_data(h,h->next);
+        h = h->next;
+    }
+    
+    h = it;
+    bubble_list(h,k-1);
+}
+
+int main(void)
+{
+    list *l;
+
+    l = create_list_random();
+    //printf("\nRandom list\n"); //FOR DEBUGGING
+    //print_list(l);
+    printf("\n\nOrdered list\n");
+    bubble_list(l,SIZE);
+    print_list(l);
+    return 0;
+}
